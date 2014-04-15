@@ -23,23 +23,23 @@ public class Logger {
 
 
 	public void error(String msg) {
-		this.write("ERROR: ".concat(msg));
+		this.write("\nERROR: ".concat(msg));
 	}
 
 	public void error(Exception e) {
-		this.write("ERROR: ".concat(printStackTrace(e)));
+		this.write("\nERROR: ".concat(printStackTrace(e)));
 	}
 
 	public void error(String msg, Exception e) {
-		this.write("ERROR: ".concat(msg).concat("\n").concat(printStackTrace(e)));
+		this.write("\nERROR: ".concat(msg).concat("\n").concat(printStackTrace(e)));
 	}
 
 	public void warn(String msg) {
-		this.write("WARN: ".concat(msg));
+		this.write("\nWARN: ".concat(msg));
 	}
 
 	public void info(String msg) {
-		this.write("INFO: ".concat(msg));
+		this.write("\nINFO: ".concat(msg));
 	}
 
 	private void write(String msg) {

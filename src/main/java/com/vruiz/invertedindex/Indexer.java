@@ -4,13 +4,13 @@ import com.vruiz.invertedindex.document.Document;
 import com.vruiz.invertedindex.document.Field;
 import com.vruiz.invertedindex.document.FieldInfo;
 import com.vruiz.invertedindex.index.*;
+import com.vruiz.invertedindex.parse.TextParser;
 import com.vruiz.invertedindex.store.TxtFileDirectory;
+import com.vruiz.invertedindex.util.Benchmark;
 import com.vruiz.invertedindex.util.Logger;
 
 import java.io.*;
 import java.util.Calendar;
-import java.util.Iterator;
-import java.util.TreeSet;
 
 /**
  * Provides a user interface to index files
@@ -22,7 +22,8 @@ public final class Indexer {
 
 	protected String directoryPath;
 
-	public  Indexer() {
+	public  Indexer(String path) {
+		this.directoryPath = path;
 		this.log = new Logger();
 	}
 
@@ -61,7 +62,7 @@ public final class Indexer {
 		Field field = new Field(FieldName.TITLE.toString(), title, new FieldInfo(false, true));
 		doc.addField(field);
 		//body needs to be indexed and tokenized
-		field = new Field(FieldName.BODY.toString(), body, new FieldInfo(true, false, Tokenizer.class));
+		field = new Field(FieldName.BODY.toString(), body, new FieldInfo(true, false, TextParser.class));
 		doc.addField(field);
 
 		// article id is not required to be in the index, even it could be indexed, I take it out to
@@ -84,6 +85,7 @@ public final class Indexer {
 		//if length is other than 3, that means something is wrong with this data, dont trust it
 		if (fields.length != 3) {
 			this.log.warn(String.format("wrong line: %s ", line.substring(0, 50)));
+			return null;
 		}
 		String id = fields[0]; //first is  article id
 		String title = fields[1]; // after id we have the title
@@ -91,7 +93,7 @@ public final class Indexer {
 		//validate that fields are not empty,
 		// id is actually optional, since it's not required to be stored in the index
 		if (title.isEmpty() || body.isEmpty()) {
-			this.log.warn(String.format("wrong article: %s - %s - %s", id, title, body.substring(0, 25)));
+			this.log.warn(String.format("wrong article, some data missing: %s - %s - %s", id, title, body.substring(0, 25)));
 			return null;
 		}
 		return createDocument(id, title, body);
@@ -106,9 +108,8 @@ public final class Indexer {
 		//the way the index is stored in disk is managed by Directory. TxtFileDirectory is a naive approach saving
 		// data in text format. Custom implementations can be set here
 		String filePath = file.getAbsolutePath();
-		directoryPath = filePath.replaceAll(file.getName(), "").concat("index/");
-		System.out.println("directory path: " + directoryPath);
-		IndexWriter indexer = new IndexWriter(new TxtFileDirectory(directoryPath));
+
+		IndexWriter indexer = new IndexWriter(new TxtFileDirectory(this.directoryPath));
 		try {
 			//delete old files before start indexing
 			indexer.reset();
@@ -121,7 +122,7 @@ public final class Indexer {
 		}
 
 		FileReader fr = new FileReader(filePath);
-		BufferedReader reader = new BufferedReader(fr);
+		BufferedReader reader = new BufferedReader(fr, 65536);
 
 		String line;
 		while ((line = reader.readLine()) != null) {
@@ -146,14 +147,11 @@ public final class Indexer {
 			indexer.close();
 		}
 
-		this.log.info(indexer.getNumDocs() + " documents indexed, containing " + indexer.getNumTerms() + " different terms");
+		this.log.info(String.format("%d documents indexed, %d different terms", indexer.getNumDocs(), indexer.getNumTerms()));
 	}
 
 	public static void main(String[] args){
-		System.out.println(new File("").getAbsolutePath());
-
-		long mem0 = Runtime.getRuntime().totalMemory();
-		long t0 = Calendar.getInstance().getTimeInMillis();
+		String currentDirectory = new File("").getAbsolutePath();
 
 		if (args.length == 0) {
 			System.out.println("no tsv file specified");
@@ -163,47 +161,29 @@ public final class Indexer {
 		String fileName = args[0];
 		File f = new File(fileName);
 		if (!f.exists()) {
-			System.out.println("tsv file can't be read, is the file there? " + fileName);
+			System.out.printf("tsv file can't be read, is the file there? %s\n", fileName);
 			System.exit(0);
 		}
 
-		Indexer indexer = new Indexer();
+		String directoryPath = currentDirectory.concat("/index/");
+		System.out.printf("\nBuilding index in path: %s \n", directoryPath);
 
+		Benchmark.getInstance().start("Indexer.main");
 		try {
+			Indexer indexer = new Indexer(directoryPath);
 			indexer.indexFile(f);
 		} catch (IOException e) {
 			System.out.println("There was a problem reading the TSV file " );
 		}
 
-		long t = (Calendar.getInstance().getTimeInMillis() - t0);
-		System.out.println("total time: " + t + " milliseconds");
-		long mem = Runtime.getRuntime().totalMemory() - mem0;
-		System.out.println("memory used: " + (float)mem/1024 + " MB");
-		String filePath = f.getAbsolutePath();
-		filePath = filePath.replaceAll(f.getName(), "").concat("index/");
-		IndexReader ir = new IndexReader(new TxtFileDirectory(filePath));
+		Benchmark.getInstance().end("Indexer.main");
 
-		TreeSet<Hit> hits = null;
-		try {
-			hits = ir.search("body", "hello");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (CorruptIndexException e) {
-			e.printStackTrace();
-		}
+		long t = Benchmark.getInstance().getTime("Indexer.main");
+		System.out.printf("\ntotal time for indexing: %d milliseconds\n", t);
+		long mem = Benchmark.getInstance().getMemory("Indexer.main");
+		System.out.printf("memory used: %f MB\n", (float) mem / 1024 / 1024);
 
-		if (hits.isEmpty()) {
-			Iterator it = hits.descendingSet().iterator();
-			int i = 1;
-			while(it.hasNext()) {
-				Hit hit = (Hit) it.next();
-				System.out.printf("%d - %f - %s \n", i, hit.score(), hit.document().fields().get("title").data());
-				i++;
-
-			}
-		}
-
-		t = (Calendar.getInstance().getTimeInMillis() - t);
-		System.out.println("time for search: " + t + " milliseconds");
+		t = Benchmark.getInstance().getTime("IndexWriter.flush");
+		System.out.printf("\ntime in IndexWriter.flush : %d milliseconds\n", t);
 	}
 }

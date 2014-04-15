@@ -5,22 +5,24 @@ import static org.junit.Assert.*;
 import com.vruiz.invertedindex.index.CorruptIndexException;
 import org.junit.Test;
 
+import java.util.Formatter;
 import java.util.Map;
 
 /**
- * Created by bik on 4/5/14.
+ * StoredFieldsCodecTest
  */
 public class StoredFieldsCodecTest {
+	Formatter formatter = new Formatter();
 
 	@Test
 	public void testWriteEntry() throws Exception {
 		long docId = 1;
 		String text = "ich liebe guacamole";
-		Map.Entry entry = new Codec.Entry<Long,String >(docId, text);
+		Map.Entry entry = new Codec.Entry<>(docId, text);
 		StoredFieldsCodec codec = new StoredFieldsCodec();
-		String data = codec.writeEntry(entry);
-
-		String expected = String.format("%d:%s", docId, text);
+		codec.writeEntry(formatter, entry);
+		String data = formatter.toString();
+		String expected = String.format("%d:%s\n", docId, text);
 		assertEquals("codec is not writing properly ", expected, data);
 	}
 
@@ -28,9 +30,10 @@ public class StoredFieldsCodecTest {
 	public void testWriteEntryEmptyText() throws Exception {
 		long docId = 1;
 		String text = "";
-		Map.Entry entry = new Codec.Entry<Long,String >(docId, text);
+		Map.Entry entry = new Codec.Entry<>(docId, text);
 		StoredFieldsCodec codec = new StoredFieldsCodec();
-		String data = codec.writeEntry(entry);
+		codec.writeEntry(formatter, entry);
+		String data = formatter.toString();
 		assertTrue("for an empty text nothing should be written", data.length() == 0);
 	}
 
@@ -40,7 +43,7 @@ public class StoredFieldsCodecTest {
 		String text = "ich liebe guacamole";
 		String rawData = String.format("%d:%s", docId, text);
 		StoredFieldsCodec codec = new StoredFieldsCodec();
-		Map.Entry<Integer,String > entry = codec.readEntry(rawData);
+		Map.Entry<Long,String > entry = codec.readEntry(rawData);
 		assertEquals("documentId doesn't match", docId, entry.getKey().longValue());
 		assertEquals("text doesn't match", text, entry.getValue());
 	}

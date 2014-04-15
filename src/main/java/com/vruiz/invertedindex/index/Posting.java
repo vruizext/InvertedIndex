@@ -20,12 +20,12 @@ public class Posting {
 	 * @param documentId documentId
 	 * @param termFrequency term frequency
 	 */
-	public Posting(long documentId, short termFrequency) {
+	public Posting(final long documentId, short termFrequency) {
 		this.documentId = documentId;
 		this.termFrequency = termFrequency;
 	}
 
-	public Posting(long documentId) {
+	public Posting(final long documentId) {
 		this(documentId, (short)0);
 	}
 

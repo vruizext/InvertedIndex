@@ -2,7 +2,8 @@ package com.vruiz.invertedindex.parse;
 
 
 /**
- *  TextParser defines a set of filters to split the data in normalized tokens
+ *  TextParser extends Parser and defines in createStreamChain() method a set of rules and filters to split text
+ *   in normalized tokens
  */
 public class TextParser extends Parser {
 

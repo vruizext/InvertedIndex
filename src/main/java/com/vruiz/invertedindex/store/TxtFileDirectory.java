@@ -89,11 +89,11 @@ public class TxtFileDirectory implements Directory {
 	 */
 	public Index read(Index index) throws IOException, CorruptIndexException {
 		//init HashMaps that will keep the index
-		HashMap<String, HashMap<Long, Integer>> norms = new HashMap<String, HashMap<Long, Integer>>();
+		HashMap<String, HashMap<Long, Integer>> norms = new HashMap<>();
 
-		HashMap<String, PostingsDictionary> dictionary = new HashMap<String, PostingsDictionary>();
+		HashMap<String, PostingsDictionary> dictionary = new HashMap<>();
 
-		HashMap<String, HashMap<Long, String>> stored = new HashMap<String, HashMap<Long, String>>();
+		HashMap<String, HashMap<Long, String>> stored = new HashMap<>();
 
 		//now load fields config info
 		FieldConfigFile fiFile = new FieldConfigFile(this.directoryPath.concat(TxtFileDirectory.FIELDS_CONFIG_FILE), new FieldConfigCodec());
@@ -110,7 +110,7 @@ public class TxtFileDirectory implements Directory {
 			 * for every field indexed, need to load norms
 			 * if the index would have millions of docs  and several fields, loading this file would take some seconds,
 			 * which wouldn't be good...
-			 * TODO the file could be loaded dynamically like the postings,  whether splitting file in small pieces
+			 * TODO the norms file could be loaded dynamically like the postings,  whether splitting file in small pieces
 			 * TODO and/or with random access to the file instead of traversing it sequentially looking for the docID
 			 * TODO but there's a trade-off, if many different files have to be read from disk and parsed, the delay
 			 * TODO would be also noticeable when there are many docs to return. It would be necessary a multi-thread
@@ -178,7 +178,12 @@ public class TxtFileDirectory implements Directory {
 	 */
 	public void reset() throws IOException, CorruptIndexException {
 		File folder = new File(this.directoryPath);
-
+		//if the directory does not exist, create it
+		if (!folder.exists()) {
+			folder.mkdir();
+			return;
+		}
+		//if it exists, delete all the files that there are
 		File[] files = folder.listFiles();
 		for (File f: files) {
 			if (f != null && f.exists()) {

@@ -17,11 +17,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by bik on 4/5/14.
+ * FieldConfigFileTest
  */
 public class FieldConfigFileTest {
 
-	String folder = "testfiles/";
+	String folder = "resources/test-files/";
 
 	@Test
 	public void testRead() throws Exception {

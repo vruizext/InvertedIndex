@@ -3,24 +3,27 @@ package com.vruiz.invertedindex.store.codec;
 import com.vruiz.invertedindex.index.CorruptIndexException;
 import org.junit.Test;
 
+import java.util.Formatter;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by bik on 4/5/14.
+ * NormsCodecTest
  */
 public class NormsCodecTest {
+	Formatter formatter = new Formatter();
+
 	@Test
 	public void testWriteEntry() throws Exception {
 		long docId = 1;
 		int norm = 2;
 		Map.Entry entry = new Codec.Entry<Long,Integer >(docId, norm);
 		NormsCodec codec = new NormsCodec();
-		String data = codec.writeEntry(entry);
-
-		String expected = String.format("%d:%d", docId, norm);
+		codec.writeEntry(formatter, entry);
+		String data = formatter.toString();
+		String expected = String.format("%d:%d\n", docId, norm);
 		assertEquals("codec is not writing properly ", expected, data);
 	}
 
@@ -29,7 +32,7 @@ public class NormsCodecTest {
 		long docId = 1;
 		Map.Entry entry = new Codec.Entry<Long,Integer >((long)1, null);
 		NormsCodec codec = new NormsCodec();
-		codec.writeEntry(entry);
+		codec.writeEntry(formatter, entry);
 	}
 
 	@Test(expected = CorruptIndexException.class)
@@ -37,7 +40,7 @@ public class NormsCodecTest {
 		int count = 1;
 		Map.Entry entry = new Codec.Entry<Long,Integer >(null, count);
 		NormsCodec codec = new NormsCodec();
-		codec.writeEntry(entry);
+		codec.writeEntry(formatter, entry);
 	}
 
 	@Test

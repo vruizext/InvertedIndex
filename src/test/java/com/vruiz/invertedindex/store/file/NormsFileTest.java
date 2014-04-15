@@ -11,13 +11,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Created by bik on 4/5/14.
+ * NormsFileTest
  */
 public class NormsFileTest {
 
-	String folder = "testfiles/";
+	String folder = "resources/test-files/";
 	@Test
 	public void testRead() throws Exception {
 		NormsFile fNorms = new NormsFile(folder.concat("norms.test.read"), new NormsCodec());
@@ -53,4 +54,19 @@ public class NormsFileTest {
 		String textExpected = new String(Files.readAllBytes(Paths.get(folder.concat("norms.test.read"))), StandardCharsets.UTF_8);
 		assertEquals("data was not written as expected", textExpected, textWritten);
 	}
+
+    @Test
+    public void testReadBigFile() throws Exception {
+        folder = "index/";
+        NormsFile fNorms = new NormsFile(folder.concat("norms.body"), new NormsCodec());
+        HashMap<Long,Integer> normsRead = (HashMap<Long,Integer>)fNorms.read();
+        int count = 0;
+
+        for(Map.Entry<Long, Integer> entry : normsRead.entrySet()) {
+            count += entry.getValue();
+        }
+        System.out.printf("total terms indexed: %d \n", count);
+        System.out.printf("average document length: %f", ((float) count / normsRead.size()));
+
+    }
 }

@@ -4,6 +4,9 @@ import com.vruiz.invertedindex.document.Field;
 import com.vruiz.invertedindex.document.FieldInfo;
 import junit.framework.TestCase;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
  * DataParserTest
  */
@@ -14,12 +17,15 @@ public class TextParserTest extends TestCase {
 		TextParser parser = field.getParser();
 		DataStream stream = parser.dataStream(field.name(), field.data());
 		stream.start();
-		while (stream.hasMoreTokens()) {
-			System.out.println(stream.out());
-		}
+		assertTrue("there should be one token", stream.hasMoreTokens());
+		assertEquals("output not filtered as expected", "test", stream.out());
+		assertTrue("there should be one token", stream.hasMoreTokens());
+		assertEquals("output not filtered as expected", "simple", stream.out());
+		assertTrue("there should be one token", stream.hasMoreTokens());
+		assertEquals("output not filtered as expected", "for", stream.out());
+		assertTrue("there should be one token", stream.hasMoreTokens());
+		assertEquals("output not filtered as expected", "parser", stream.out());
 	}
 
-	public void testCreateStreamChain() throws Exception {
 
-	}
 }

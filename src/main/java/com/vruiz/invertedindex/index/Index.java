@@ -14,30 +14,24 @@ public class Index {
 	/**
 	 * keep a list of the field names  of the fields that are indexed and another for the stored
 	 */
-	protected HashMap<String, HashSet<String>> fieldNamesByOption = new HashMap<String, HashSet<String>>();
-
-	/**
-	 * For every indexed field,  keep a map of Terms-Postings list.
-	 * In a terms-postings list,for every indexed Term we keep a list of Postings
-	 */
-//	protected HashMap<String, HashMap<String, List<Posting>>> postingsByTerm = new HashMap<String, HashMap<String, List<Posting>>>();
+	protected HashMap<String, HashSet<String>> fieldNamesByOption = new HashMap<>();
 
 	/**
 	 * For every indexed field,  keep a postings dictionary
 	 * A postings dictionary keep list of terms-postings list
 	 * In a terms-postings list,for every indexed Term we keep a list of Postings
 	 */
-	protected HashMap<String, PostingsDictionary> postingsDictionary = new HashMap<String, PostingsDictionary>();
+	protected HashMap<String, PostingsDictionary> postingsDictionary = new HashMap<>();
 
 	/**
 	 * norms of every docId-fieldName
 	 */
-	protected HashMap<String, HashMap<Long, Integer>> normsByDocument = new HashMap<String, HashMap<Long, Integer>>();
+	protected HashMap<String, HashMap<Long, Integer>> normsByDocument = new HashMap<>();
 
 	/**
 	 * For every stored field, we have a HashMap with documentId as key and the stored field as value
 	 */
-	protected HashMap<String, HashMap<Long, String>> storedByDocument = new HashMap<String,HashMap<Long, String>>();
+	protected HashMap<String, HashMap<Long, String>> storedByDocument = new HashMap<>();
 
 
 	/**
@@ -100,7 +94,7 @@ public class Index {
 	 * @param fieldName
 	 * @return
 	 */
-	public PostingsDictionary getPostingsDictionary(String fieldName) {
+	public PostingsDictionary getPostingsDictionary(final String fieldName) {
 		PostingsDictionary dictionary = this.postingsDictionary.get(fieldName);
 		if (dictionary == null) {
 			dictionary = new PostingsDictionary();
@@ -109,20 +103,6 @@ public class Index {
 		return dictionary;
 	}
 
-	/**
-	 * Get postings lists for a field
-	 * If there's any defined, set up a new one
-	 * @param fieldName
-	 * @return
-	 */
-//	public HashMap<String, List<Posting>> getTermPostings(String fieldName) {
-//		HashMap<String, List<Posting>> postings = this.postingsByTerm.get(fieldName);
-//		if (postings == null) {
-//			postings = new HashMap<String, List<Posting>>();
-//			this.postingsByTerm.put(fieldName, postings);
-//		}
-//		return postings;
-//	}
 
 	/**
 	 * Get document norms for fieldName
@@ -130,10 +110,10 @@ public class Index {
 	 * @param fieldName
 	 * @return
 	 */
-	public HashMap<Long, Integer> getDocumentNorms(String fieldName) {
+	public HashMap<Long, Integer> getDocumentNorms(final String fieldName) {
 		HashMap<Long, Integer> norms = this.normsByDocument.get(fieldName);
 		if (norms == null) {
-			norms = new HashMap<Long, Integer>();
+			norms = new HashMap<>();
 			this.normsByDocument.put(fieldName, norms);
 		}
 		return norms;
@@ -145,39 +125,39 @@ public class Index {
 	 * @param fieldName
 	 * @return
 	 */
-	public HashMap<Long, String> getStoredDocuments(String fieldName) {
+	public HashMap<Long, String> getStoredDocuments(final String fieldName) {
 		HashMap<Long, String> stored = this.storedByDocument.get(fieldName);
 		if (stored == null) {
-			stored = new HashMap<Long, String>();
+			stored = new HashMap<>();
 			this.storedByDocument.put(fieldName, stored);
 		}
 		return stored;
 	}
 
 	/**
-	 * get
+	 * get fields which have configured the  option
 	 * @return a set containing fields which have configured the specified option
 	 */
-	public HashSet<String> getFieldNamesByOption(String fieldOption) {
+	public HashSet<String> getFieldNamesByOption(final String fieldOption) {
 		HashSet<String> fields = this.fieldNamesByOption.get(fieldOption);
 		if (fields == null) {
 			if (fieldOption.equals(FieldInfo.INDEXED)) {
 				if (!this.postingsDictionary.isEmpty()) {
 					Set<String> keySet = this.postingsDictionary.keySet();
 					//this is a bit confusing... but the jvm can't cast directly from keySet to HashSet ;(
-					fields = new HashSet<String>(Arrays.asList(keySet.toArray(new String[0])));
+					fields = new HashSet<>(Arrays.asList(keySet.toArray(new String[0])));
 				} else {
-					fields = new HashSet<String>();
+					fields = new HashSet<>();
 				}
 			} else if (fieldOption.equals(FieldInfo.STORED)) {
 				if (!this.storedByDocument.isEmpty()) {
 					Set<String> keySet = this.storedByDocument.keySet();
-					fields = new HashSet<String>(Arrays.asList(keySet.toArray(new String[0])));
+					fields = new HashSet<>(Arrays.asList(keySet.toArray(new String[0])));
 				} else {
-					fields = new HashSet<String>();
+					fields = new HashSet<>();
 				}
 			}
-			this.fieldNamesByOption.put(fieldOption, (HashSet<String>)fields);
+			this.fieldNamesByOption.put(fieldOption, fields);
 		}
 		return fields;
 	}
@@ -190,10 +170,6 @@ public class Index {
 	public HashMap<String, HashSet<String>> getFieldNamesByOption() {
 		return this.fieldNamesByOption;
 	}
-
-//	public void setPostingsByTerm(HashMap<String, HashMap<String, List<Posting>>> postingsByTerm) {
-//		this.postingsByTerm = postingsByTerm;
-//	}
 
 	public void setNormsByDocument(HashMap<String, HashMap<Long, Integer>> normsByDocument) {
 		this.normsByDocument = normsByDocument;
@@ -229,8 +205,8 @@ public class Index {
 	 * @param documentId
 	 * @return Document containing retrieved data
 	 */
-	public Document document(long documentId) {
-		Document doc = new Document();
+	public Document document(final long documentId) {
+		Document doc = new Document(documentId);
 		for(String fieldName: storedByDocument.keySet()) {
 			HashMap<Long, String> storedData = this.storedByDocument.get(fieldName);
 			if (storedData.containsKey(documentId)) {

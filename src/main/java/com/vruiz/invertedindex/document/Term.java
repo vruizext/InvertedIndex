@@ -11,12 +11,12 @@ public class Term {
 	private String fieldName;
 
 	/**
-	 * The word/token or whatever we are indexing
+	 * The word/token or whatever it's indexed/stored
 	 */
-	private String token;
+	public String token;
 
 
-	public Term(String fieldName, String token) {
+	public Term(final String fieldName, final String token) {
 		this.token = token;
 		this.fieldName = fieldName;
 	}

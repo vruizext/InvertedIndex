@@ -13,11 +13,11 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 
 /**
- * Created by bik on 4/5/14.
+ * StoredFieldsFileTest
  */
 public class StoredFieldsFileTest {
 
-	String folder = "testfiles/";
+	String folder = "resources/test-files/";
 
 	@Test
 	public void testRead() throws Exception {

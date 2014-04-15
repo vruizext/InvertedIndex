@@ -20,7 +20,7 @@ public class StoredFieldsFile extends TxtFile {
 
 	@Override
 	protected  HashMap<?, ?> parseData() throws IOException, CorruptIndexException {
-		HashMap<Long, String> storedFields = new HashMap<Long, String>();
+		HashMap<Long, String> storedFields = new HashMap<>();
 		String rawData = null;
 		//traverse the file and parse one by one the postings of every term using codec
 		while ((rawData = this.reader.readLine()) != null) {

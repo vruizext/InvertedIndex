@@ -1,6 +1,7 @@
 package com.vruiz.invertedindex.document;
 
-import com.vruiz.invertedindex.index.Tokenizer;
+import com.vruiz.invertedindex.parse.TextParser;
+import com.vruiz.invertedindex.parse.DataStream;
 import com.vruiz.invertedindex.util.Logger;
 
 /**
@@ -12,12 +13,16 @@ public class Field {
 	/**
 	 * name of the field
 	 */
-	private String name;
+	protected String name;
 
 	/**
 	 * data contained by the field, contains the terms to be indexed, and/or stored
 	 */
-	private String data;
+	protected String data;
+
+
+	protected DataStream stream;
+
 
 	/**
 	 * configuration options for this field
@@ -25,8 +30,9 @@ public class Field {
 	private FieldInfo options;
 
 
+	private static TextParser parser = null;
 
-	public Field(String name, String data, FieldInfo options) {
+	public Field(final String name, String data, final FieldInfo options) {
 		this.name = name;
 		this.data = data;
 		this.options = options;
@@ -41,19 +47,19 @@ public class Field {
 	}
 
 	public String data() {
-		return this.data;
+		return data;
 	}
 
 	public boolean isIndexed() {
-		return this.options.isIndexed();
+		return options.isIndexed();
 	}
 
 	public boolean isStored() {
-		return this.options.isStored();
+		return options.isStored();
 	}
 
 	public boolean isTokenized() {
-		return this.options.isTokenized();
+		return options.isTokenized();
 	}
 
 	public void setData(String data) {
@@ -61,19 +67,31 @@ public class Field {
 	}
 
 	/**
-	 * Obtain by reflection an instance of the Tokenizer
-	 * With this approach, tokenizers can be defined per field, dynamically at run time. The client only needs
-	 * to pass the tokenizer class within FieldInfo when the Field is declared.
-	 * @return A Tokenizer object which iterates over the data to extract terms
+	 * Obtain by reflection an instance of the Parser
+	 * With this approach, parsers can be defined per field, dynamically. The client only needs
+	 * to pass the  class within FieldInfo when the Field is declared.
+	 * @return A DataParser
 	 */
-	public Tokenizer getTokenizer() {
-		Class c = this.options.getTokenizer();
+	public TextParser getParser() {
+		Class c = options.getParser();
 		try {
-			return (Tokenizer)c.getConstructor(Tokenizer.class).newInstance(this.data);
+			TextParser parser = (TextParser)c.newInstance();
+			return parser;
 		} catch (Exception e) {
-			Logger.getInstance().error("couldn't create tokenizer object");
+			Logger.getInstance().error("couldn't create tokenizer object", e);
 		}
 		return null;
+	}
+
+
+	public DataStream getDataStream(TextParser parser) {
+		if (!options.isIndexed()) {
+			return null;
+		}
+		if (stream != null) {
+			return stream;
+		}
+		return parser.dataStream(name, data);
 	}
 
 }

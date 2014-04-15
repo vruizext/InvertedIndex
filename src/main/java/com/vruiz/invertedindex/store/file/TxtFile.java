@@ -86,12 +86,14 @@ public abstract class TxtFile {
 	public void write(HashMap<?, ?> map) throws IOException, CorruptIndexException {
 		this.openWriter();
 		if (this.writer != null) {
+			StringBuilder sb = new StringBuilder();
+			Formatter formatter = new Formatter(sb);
 			//iterate over entries, write one by one using the codec to transform data to String
 			for(Map.Entry entry : map.entrySet()) {
-				String data = this.codec.writeEntry(entry);
-				this.writer.write(data);
-				this.writer.newLine();
+				this.codec.writeEntry(formatter, entry);
 			}
+			this.writer.write(formatter.toString());
+			this.writer.flush();
 			this.closeWriter();
 		}
 	}

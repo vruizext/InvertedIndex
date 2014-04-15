@@ -8,6 +8,10 @@ import java.util.List;
  */
 public class StopWordFilter extends DataStream {
 
+	/**
+	 * list of stopwords
+	 * TODO accept custom stopwords list
+	 */
 	private final static List<String> STOPWORDS = Arrays.asList("a", "able", "about",
 			"across", "after", "all", "almost", "also", "am", "among", "an",
 			"and", "any", "are", "as", "at", "be", "because", "been", "but",

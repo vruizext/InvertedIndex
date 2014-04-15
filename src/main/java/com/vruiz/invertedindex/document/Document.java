@@ -16,24 +16,22 @@ public class Document {
 	/**
 	 * A document is composed of Fields. Every field is identified by its name (String)
 	 */
-	private HashMap<String, Field> fields;
+	private final HashMap<String, Field> fields = new HashMap<>();
 
 
 	public Document(long documentId) {
 		this.setDocumentId(documentId);
-		this.fields = new HashMap<String, Field>();
 	}
 
 	public Document() {
 		this.setDocumentId(-1);
-		this.fields = new HashMap<String, Field>();
 	}
 
 	public HashMap<String, Field> fields() {
 		return this.fields;
 	}
 
-	public void addField(Field field) {
+	public void addField(final Field field) {
 		this.fields.put(field.name(), field);
 	}
 

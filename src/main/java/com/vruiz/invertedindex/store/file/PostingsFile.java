@@ -20,7 +20,7 @@ public class PostingsFile extends TxtFile {
 
 
 	protected HashMap<?,?> parseData() throws IOException, CorruptIndexException {
-		HashMap<String, List<Posting>> postings = new HashMap<String, List<Posting>>();
+		HashMap<String, List<Posting>> postings = new HashMap<>();
 		String rawData = null;
 		//traverse the file and parse one by one the postings of every term using codec
 		while ((rawData = this.reader.readLine()) != null) {

@@ -17,10 +17,10 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by bik on 4/5/14.
+ * PostingsFileTest
  */
 public class PostingsFileTest {
-	String folder = "testfiles/";
+	String folder = "resources/test-files/";
 
 	@Before
 	public void setUp() throws Exception {
@@ -38,13 +38,13 @@ public class PostingsFileTest {
 	@Test
 	public void testWrite() throws Exception {
 		//build map and insert data
-		HashMap<String, List<Posting>> postings = new HashMap<String, List<Posting>>();
-		LinkedList<Posting> postingsList = new LinkedList<Posting>();
+		HashMap<String, List<Posting>> postings = new HashMap<>();
+		LinkedList<Posting> postingsList = new LinkedList<>();
 		postingsList.add(new Posting((long)1, (short)2));
 		postingsList.add(new Posting((long)4, (short)3));
 		postings.put("avocado", postingsList);
 
-		postingsList = new LinkedList<Posting>();
+		postingsList = new LinkedList<>();
 		postingsList.add(new Posting((long)2, (short)1));
 		postingsList.add(new Posting((long)5, (short)4));
 		postings.put("guacamole", postingsList);

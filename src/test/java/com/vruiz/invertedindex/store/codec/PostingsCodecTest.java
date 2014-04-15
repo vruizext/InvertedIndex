@@ -9,13 +9,15 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Formatter;
 import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * Created by bik on 4/5/14.
+ * PostingsCodecTest
  */
 public class PostingsCodecTest {
+	Formatter formatter = new Formatter();
 
 	private Map.Entry entry;
 
@@ -25,38 +27,38 @@ public class PostingsCodecTest {
 		LinkedList<Posting> postingsList = new LinkedList<Posting>();
 		postingsList.add(new Posting((long)1, (short)2));
 		postingsList.add(new Posting((long)4, (short)3));
-		entry = new Codec.Entry<String, LinkedList<Posting>>(term, postingsList);
+		entry = new Codec.Entry<>(term, postingsList);
 	}
 
 	@Test
 	public void testWriteEntry() throws Exception {
 		PostingsCodec codec = new PostingsCodec();
-		String rawData = codec.writeEntry(entry);
-		String expected = "avocado:1,2;4,3;";
+		codec.writeEntry(formatter, entry);
+		String rawData = formatter.toString();
+		String expected = "avocado:1,2;4,3;\n";
 		assertEquals("codec is not writing properly", expected, rawData);
 	}
 
 	@Test(expected = CorruptIndexException.class)
 	public void testWriteEntryEmptyTerm() throws Exception {
 		PostingsCodec codec = new PostingsCodec();
-		entry = new Codec.Entry<String, LinkedList<Posting>>(null, (LinkedList<Posting>)this.entry.getValue());
-		String rawData = codec.writeEntry(entry);
+		entry = new Codec.Entry<>(null, (LinkedList<Posting>)this.entry.getValue());
+		codec.writeEntry(formatter, entry);
 	}
 
 	@Test(expected = CorruptIndexException.class)
 	public void testWriteEntryEmptyList() throws Exception {
 		PostingsCodec codec = new PostingsCodec();
-		entry = new Codec.Entry<String, LinkedList<Posting>>((String)entry.getKey(), null);
-		String rawData = codec.writeEntry(entry);
+		entry = new Codec.Entry<>((String)entry.getKey(), null);
+		codec.writeEntry(formatter, entry);
 	}
 
 	@Test(expected = CorruptIndexException.class)
 	public void testWriteEntryEmptyListNode() throws Exception {
-		String term = "avocado";
 		LinkedList<Posting> postingsList = (LinkedList<Posting>)this.entry.getValue();
 		postingsList.add(null);
 		PostingsCodec codec = new PostingsCodec();
-		String rawData = codec.writeEntry(entry);
+		codec.writeEntry(formatter, entry);
 	}
 
 	@Test
@@ -70,7 +72,7 @@ public class PostingsCodecTest {
 		assertEquals("docId doesn't match", this.entry.getKey(), entry.getKey());
 
 		LinkedList<Posting> expectedList = (LinkedList<Posting>)this.entry.getValue();
-		LinkedList<Posting> list = (LinkedList<Posting>)entry.getValue();
+		LinkedList<Posting> list = entry.getValue();
 		assertEquals("posting list not properly parsed, wrong length", expectedList.size(), list.size());
 
 		Posting expectedPosting = expectedList.getFirst();

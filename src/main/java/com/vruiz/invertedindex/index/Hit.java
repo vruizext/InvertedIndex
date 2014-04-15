@@ -18,7 +18,7 @@ public class Hit implements Comparable<Hit> {
 	 */
 	private float score;
 
-	public Hit(Document doc,  float score) {
+	public Hit(final Document doc, final float score) {
 		this.document = doc;
 		this.score = score;
 	}

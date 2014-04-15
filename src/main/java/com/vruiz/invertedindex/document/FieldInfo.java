@@ -1,8 +1,6 @@
 package com.vruiz.invertedindex.document;
 
-import com.vruiz.invertedindex.index.Tokenizer;
-
-import java.io.InvalidClassException;
+import com.vruiz.invertedindex.parse.TextParser;
 
 /**
  * Represents configuration for a concrete type of field
@@ -10,7 +8,7 @@ import java.io.InvalidClassException;
 public class FieldInfo {
 
 	/**
-	 * string representation for the implemented FieldTypes
+	 * string representation for the  field types INDEXED and STORED
 	 */
 	public static final String INDEXED = "indexed";
 	public static final String STORED = "stored";
@@ -27,7 +25,7 @@ public class FieldInfo {
 	protected static final boolean STORED_DEFAULT = false;
 
 	/**
-	 * Text has to be tokenized
+	 * Text has to be tokenized, ie, splitted in tokens using a parser
 	 */
 	protected static final boolean TOKENIZED_DEFAULT = true;
 
@@ -48,9 +46,9 @@ public class FieldInfo {
 	protected boolean tokenized;
 
 	/**
-	 * tokenizer used to analyze/tokenize/normalize the data
+	 * parser used to analyze/tokenize/normalize the data
 	 */
-	private Class tokenizer = null;
+	private Class parser = null;
 
 
 	public FieldInfo() {
@@ -60,21 +58,21 @@ public class FieldInfo {
 	}
 
 	/**
-	 * For the field to be tokenized, a tokenizer has to be passed
+	 * For the field to be tokenized, a parser has to be passed
 	 * @param indexed is the field being indexex?
 	 * @param stored is the field being stored?
-	 * @param tokenizer in case the field is indexed, is a custom Tokenizer defined?
+	 * @param parser in case the field is indexed, a DataParser needs to be defined
 	 */
-	public FieldInfo(boolean indexed, boolean stored, Class tokenizer)  {
+	public FieldInfo(boolean indexed, boolean stored, Class parser)  {
 		this.indexed = indexed;
 		this.stored = stored;
-		if (tokenizer.isAssignableFrom(Tokenizer.class)) {
-			this.tokenizer = tokenizer;
+		if (parser.isAssignableFrom(TextParser.class)) {
+			this.parser = parser;
 			this.tokenized = true;
 		} else {
-			this.tokenized = false;
-			//what to do if tokenizer is not as expected an object of Tokenizer or subclass?
+			//TODO what should we do if parser is not as expected an object of Tokenizer or subclass?
 			//at least user should be notified that he's doing something wrong...
+			this.tokenized = false;
 		}
 	}
 
@@ -97,8 +95,8 @@ public class FieldInfo {
 		return this.tokenized;
 	}
 
-	public Class getTokenizer() {
-		return tokenizer;
+	public Class getParser() {
+		return parser;
 	}
 
 }

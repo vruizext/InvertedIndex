@@ -20,7 +20,7 @@ public class FieldConfigFile extends TxtFile {
 	}
 
 	protected  HashMap<?, ?> parseData() throws IOException, CorruptIndexException {
-		HashMap<String, HashSet<String>> fields = new HashMap<String, HashSet<String>>();
+		HashMap<String, HashSet<String>> fields = new HashMap<>();
 		String rawData = null;
 		//traverse the file and parse one by one the postings of every term using codec
 		while ((rawData = this.reader.readLine()) != null) {

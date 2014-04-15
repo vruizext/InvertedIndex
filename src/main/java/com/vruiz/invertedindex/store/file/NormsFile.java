@@ -20,7 +20,7 @@ public class NormsFile extends TxtFile {
 
 	@Override
 	protected HashMap<?, ?> parseData() throws IOException, CorruptIndexException {
-		HashMap<Long, Integer> norms = new HashMap<Long, Integer>();
+		HashMap<Long, Integer> norms = new HashMap<>();
 		String rawData = null;
 		//traverse the file and parse one by one the postings of every term using codec
 		while ((rawData = this.reader.readLine()) != null) {

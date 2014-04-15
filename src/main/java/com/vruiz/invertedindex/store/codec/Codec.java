@@ -2,6 +2,8 @@ package com.vruiz.invertedindex.store.codec;
 
 import com.vruiz.invertedindex.index.CorruptIndexException;
 
+import java.io.Writer;
+import java.util.Formatter;
 import java.util.Map;
 
 /**
@@ -15,7 +17,7 @@ public interface Codec {
 	 * @param entry a Map entry
 	 * @return entry formatted to String
 	 */
-	public String writeEntry(Map.Entry entry) throws CorruptIndexException;
+	public void writeEntry(Formatter formatter, Map.Entry entry) throws CorruptIndexException;
 
 	public Map.Entry readEntry(String data) throws CorruptIndexException;
 
