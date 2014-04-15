@@ -36,6 +36,10 @@ Once the project is built, to start indexing a file, use `index.sh`:
 ```
 $ ./bin/index.sh {path to TSV file}
 ```
+`ìndex.sh` sets the initial JVM heap size to 1GB  and the maximum to 2GB. Allocating this amount of RAM before starting
+to index speeds-up the indexing process since the application has enough free RAM to work and no time is lost later to
+allocate the RAM on demand.
+
 
 If you don't have any TSV file, try to download from this link
 ```
