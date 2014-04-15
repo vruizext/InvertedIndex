@@ -55,7 +55,7 @@ public class NormsFileTest {
 		assertEquals("data was not written as expected", textExpected, textWritten);
 	}
 
-    @Test
+
     public void testReadBigFile() throws Exception {
         folder = "index/";
         NormsFile fNorms = new NormsFile(folder.concat("norms.body"), new NormsCodec());
