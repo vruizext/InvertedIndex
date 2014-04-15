@@ -37,6 +37,12 @@ Once the project is built, to start indexing a file, use `index.sh`:
 $ ./bin/index.sh {path to TSV file}
 ```
 
+If you don't have any TSV file, try to download from this link
+```
+$ wget https://www.dropbox.com/s/omulkumbcxx2jo4/simplewiki.tsv.bz2
+$ bunzip2 simplewiki.tsv.bz2
+```
+
 When the index is ready, to search a term in the index use `search.sh`:
 ```
 $ ./bin/search.sh {term}
