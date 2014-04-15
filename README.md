@@ -55,7 +55,7 @@ $ ./bin/client.sh {term}
 Discussion questions
 ---------------------
 
-# Describe the runtime performance of your solution. What is the complexity? Where are the bottlenecks?
+### Describe the runtime performance of your solution. What is the complexity? Where are the bottlenecks?
 
 For both index and search components, there will be a common bottleneck, the access to disk through the IO. The fewer
 the application writes or reads files, the faster it will run. Therefore I've tried to minimize disk accesses.
@@ -107,7 +107,7 @@ which will be significantly smaller than the total number of documents.
 
 
 
-# Is your solution scalable to handle large corpora?
+### Is your solution scalable to handle large corpora?
 
 As mentioned above, for large corporas, the indexing time is growing linearly, and could be quite high because the
 solution implemented process and writes data to disk sequentially, which could be improved using multi-threads ie parallel
@@ -127,7 +127,7 @@ therefore the total time required to perform a query.
 
 
 
-# What are the limitations of your ranking strategy?
+### What are the limitations of your ranking strategy?
 
 My scoring algorithm assigns score proportionally to the term frequency and inverse proportionally to the norm of the
 document. That means, the more frequent the term appears in the document, the higher the score, and the shorter the
@@ -158,7 +158,7 @@ matching the term with higher IDF (lower document frequency) would be considered
 other terms with lower IDF.
 
 
-# If you had more time, what improvements would you make, and in what order of priority?
+### If you had more time, what improvements would you make, and in what order of priority?
 
 * To get a better efficiency and performance, I would implement a new storage strategy using a binary format to write/read
 index files, and would access files randomly instead of sequentially or loading the whole file in memory like I do right now.
